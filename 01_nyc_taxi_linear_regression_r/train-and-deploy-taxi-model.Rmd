@@ -256,14 +256,17 @@ dataset <- create_tabular_dataset_from_delimited_files(
 ```
 
 ```{r}
+dataset_name <= paste(username,"green-taxi", sep="-" )
+
 register_dataset(
   workspace=ws,
   dataset=dataset,
-  name='green-taxi',
+  name=dataset_name,
   description = 'description',
-  tags = list("tag" = "dataset", "tag" = "cleansed"),
+  tags = list("tag" = "ds", "tag" = "cleansed"),
   create_new_version = TRUE
 )
+
 ```
 
 The variable $target_path$ will be used later **`r target_path`**
