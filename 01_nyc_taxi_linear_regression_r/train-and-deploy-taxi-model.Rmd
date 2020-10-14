@@ -1,0 +1,555 @@
+---
+title: "Train and deploy taxi model with Azure ML"
+author: "Megan Masanz"
+date: "10/6/2020"
+output: html_document
+---
+
+In this tutorial, you learn the foundational design patterns in Azure Machine Learning.  You'll train and deploy a Generalized Linear Model to predict
+
+After completing this tutorial, you'll have the practical knowledge of the R SDK to scale up to developing more-complex experiments and workflows.
+
+In this tutorial, you learn the following tasks:
+
+* Connect your workspace
+* Load data and prepare for training
+* Upload data to the datastore so it is available for remote training
+* Create a compute resource
+* --Train a caret model to predict probability of fatality
+* Deploy a prediction endpoint
+* Test the model from R
+
+## Before we begin
+
+```{r}
+username <- "memasanz"
+```
+## Prerequisites
+
+If you don't have access to an Azure ML workspace, follow the [setup tutorial](https://azure.github.io/azureml-sdk-for-r/articles/configuration.html) to configure and create a workspace.
+
+## Set up your development environment
+The setup for your development work in this tutorial includes the following actions:
+
+* Install required packages
+* Connect to a workspace, so that your local computer can communicate with remote resources
+* Create an experiment to track your runs
+* Create a remote compute target to use for training
+
+
+### Install required packages
+This tutorial assumes you already have the Azure ML SDK installed. 
+(If you are running this vignette from an RStudio instance in an Azure
+ML Compute Instance, the package is already installed for you.)
+Go ahead and load the **azuremlsdk** package.
+
+```{r}
+library(azuremlsdk)
+library(lubridate)
+library(readr)
+```
+
+The training and scoring scripts (`accidents.R` and `accident_predict.R`) have some additional dependencies. If you plan on running those scripts locally, make sure you have those required packages as well.
+
+### Load your workspace
+Instantiate a workspace object from your existing workspace. The following code will load the workspace details from the **config.json** file. You can also retrieve a workspace using [`get_workspace()`](https://azure.github.io/azureml-sdk-for-r/reference/get_workspace.html).
+You will be asked to login, and you may get a warning message
+
+```{r}
+ws <- load_workspace_from_config()
+ws
+
+write_workspace_config(ws, path = "./train", file_name = NULL)
+```
+
+### Create an experiment
+An Azure ML experiment tracks a grouping of runs, typically from the same training script. Create an experiment to track the runs for training the caret model on the accidents data.
+
+```{r create_experiment}
+experiment_name <- paste(username, "taxi-experiment-r", sep = "-") 
+exp <- experiment(ws, experiment_name)
+```
+
+### Create a compute target
+By using Azure Machine Learning Compute (AmlCompute), a managed service, data scientists can train machine learning models on clusters of Azure virtual machines. Examples include VMs with GPU support. In this tutorial, you create a single-node AmlCompute cluster as your training environment. The code below creates the compute cluster for you if it doesn't already exist in your workspace.
+
+You may need to wait a few minutes for your compute cluster to be provisioned if it doesn't already exist.
+
+```{r create_cluster}
+cluster_name <- paste(username, "rcluster", sep = "") 
+compute_target <- get_compute(ws, cluster_name = cluster_name)
+if (is.null(compute_target)) {
+  vm_size <- "STANDARD_D2_V2" 
+  compute_target <- create_aml_compute(workspace = ws,
+                                       cluster_name = cluster_name,
+                                       vm_size = vm_size,
+                                       min_nodes = 1,
+                                       max_nodes = 1)
+  
+  wait_for_provisioning_completion(compute_target, show_output = TRUE)
+}
+```
+This cluster has a maximum size of three nodes, but only one will be provisioned for now. The second will only be provisioned as needed, and will automatically de-provision when no longer in use. You can even set `min_nodes=0` to make the first node provision on demand as well (and experiments will wait for the node to provision before starting).
+
+## Prepare data for training
+This tutorial uses data from the US [National Highway Traffic Safety Administration](https://cdan.nhtsa.gov/tsftables/tsfar.htm)  
+(with thanks to [Mary C. Meyer and Tremika Finney](https://www.stat.colostate.edu/~meyer/airbags.htm)).
+This dataset includes data from over 25,000 car crashes in the US, with variables you can use to predict the likelihood of a fatality. First, import the data into R and transform it into a new dataframe `accidents` for analysis, and export it to an `Rdata` file.
+
+```{r}
+dataset <- create_tabular_dataset_from_parquet_files(path="https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/green_taxi_data.parquet",
+                                                validate = TRUE,
+                                                include_path = FALSE,
+                                                set_column_types = NULL,
+                                                partition_format = NULL
+)
+
+df <- load_dataset_into_data_frame(dataset,on_error = "null",out_of_range_datetime = "null")
+```
+
+Number of variables in the datset **`r ncol(df)`**
+
+```{r}
+num_cols = ncol(df)
+print(num_cols)
+```
+
+## Create time based features
+
+Now that the initial data is loaded, define a function to create various time-based features from the pickup datetime field. This will create new fields for the month number, day of month, day of week, and hour of day, and will allow the model to factor in time-based seasonality.
+
+```{r}
+
+df$month_num =  month(as.POSIXlt(df$lpepPickupDatetime))
+df$day_of_month = day(as.POSIXlt(df$lpepPickupDatetime))
+df$day_of_week = wday(as.POSIXlt(df$lpepPickupDatetime))
+df$hour_of_day = hour(as.POSIXlt(df$lpepPickupDatetime))
+num_cols = ncol(df)
+print(num_cols)
+```
+
+
+
+Number of variables in the datset **`r ncol(df)`**, let's remove some columns that we don't need
+
+
+```{r}
+drops = c("lpepPickupDatetime", "lpepDropoffDatetime", "puLocationId", "doLocationId", 
+                      "extra", "mtaTax","improvementSurcharge", "tollsAmount", "ehailFee", 
+                      "tripType","rateCodeID", "storeAndFwdFlag", "paymentType", "fareAmount", "tipAmount")
+
+df = df[ , !(names(df) %in% drops)]
+num_cols = ncol(df)
+
+```
+
+```{r}
+summary(df)
+
+```
+### Cleanse Data
+Note that the 
+1. passenger count should not be 0
+2. trip Distance should not be 0
+3. pickupLatitude of 0 is strange
+4. dropOffLongitude of 0 is strange
+
+final_df = green_taxi_df.query("pickupLatitude>=40.53 and pickupLatitude<=40.88")
+final_df = final_df.query("pickupLongitude>=-74.09 and pickupLongitude<=-73.72")
+final_df = final_df.query("tripDistance>=0.25 and tripDistance<31")
+
+Check on passenger Count
+```{r}
+range(df$passengerCount)
+nrow(df[ df$passengerCount == 0, ])
+df = df[df$passengerCount > 0, ] 
+
+
+```
+
+Check on Total Amount
+```{r}
+nrow(df)
+range(df$totalAmount)
+nrow(df[ df$totalAmount < 0, ])
+df = df[df$totalAmount > 0, ]
+nrow(df)
+```
+
+Check on tripDistance
+```{r}
+nrow(df)
+range(df$tripDistance)
+nrow(df[ df$tripDistance > 50, ])
+nrow(df[ df$tripDistance < .01, ])
+df = df[df$tripDistance < 50 & df$tripDistance > .01, ]  
+nrow(df)
+```
+Remove columns for training
+```{r}
+drops = c("pickupLongitude", "pickupLatitude", "dropoffLongitude", "dropoffLatitude", "__index_level_0__")
+df = df[ , !(names(df) %in% drops)]
+num_cols = ncol(df)
+colnames(df)
+```
+
+
+Export the transformed dataset into to an `Rdata` file.  This will save to your current directory
+
+```{r}
+filename <- paste(username, "green-taxi.Rd", sep="-")
+file1 <- paste("./train/", filename, sep="")
+df$vendorID <- factor(df$vendorID)
+df$month_num <- ordered(df$month_num)
+df$day_of_month <- ordered(df$day_of_month)
+df$day_of_week <- ordered(df$day_of_week)
+df$hour_of_day <- ordered(df$hour_of_day)
+saveRDS(df, file=file1)
+
+print(file)
+```
+
+```{r}
+library(readr)
+
+filename <- paste(username, "green-taxi.csv", sep="-")
+file2 <- paste("./train/", filename, sep="")
+write_csv(df, file2)
+```
+
+### Upload data to the datastore
+Upload data to the cloud so that it can be access by your remote training environment. Each Azure ML workspace comes with a default datastore that stores the connection information to the Azure blob container that is provisioned in the storage account attached to the workspace. The following code will upload the accidents data you created above to that datastore.
+
+```{r upload_data}
+ds <- get_default_datastore(ws)
+
+target_path <- paste(username, "greentaxi", sep="-")
+```
+
+```{r upload to datastore}
+files = c(file1, file2)
+upload_files_to_datastore(ds,
+                          files,
+                          target_path = target_path,
+                          overwrite = TRUE)
+print(target_path)
+```
+
+```{r}
+file = paste(username, "green-taxi.csv", sep="-")
+path_on_datastore = paste(target_path, file, sep="/")
+
+datapath <- data_path(datastore=ds, path_on_datastore = path_on_datastore, name = NULL)
+
+dataset <- create_tabular_dataset_from_delimited_files(
+  path = datapath,
+  validate = TRUE,
+  include_path = FALSE,
+  infer_column_types = TRUE,
+  set_column_types = NULL,
+  separator = ",",
+  header = TRUE,
+  partition_format = NULL,
+  support_multi_line = FALSE,
+  empty_as_string = FALSE
+)
+```
+
+```{r}
+register_dataset(
+  workspace=ws,
+  dataset=dataset,
+  name='green-taxi',
+  description = 'description',
+  tags = list("tag" = "dataset", "tag" = "cleansed"),
+  create_new_version = TRUE
+)
+```
+
+The variable $target_path$ will be used later **`r target_path`**
+
+### Create am r environment
+
+Next, define an Azure ML **environment** for your script's package dependencies. With an environment, you specify R packages (from CRAN or elsewhere) that are needed for your script to run. You can also provide the values of environment variables that your script can reference to modify its behavior. By default, Azure ML will build the same default Docker image used with the estimator for training. Since the tutorial has no special requirements, create an environment with no special attributes.
+
+[Link](https://azure.github.io/azureml-sdk-for-r/reference/cran_package.html).
+
+```{r create_environment}
+
+pkg1 <- cran_package("lubridate")
+pkg2 <- cran_package("optparse")
+env <- r_environment(name = "r_env",
+                     cran_packages = list(pkg1, pkg2))
+```
+
+### Create an Estimator
+
+An Azure ML estimator encapsulates the run configuration information needed for executing a training script on the compute target. Azure ML runs are run as containerized jobs on the specified compute target. By default, the Docker image built for your training job will include R, the Azure ML SDK, and a set of commonly used R packages. See the full list of default packages included [here](https://azure.github.io/azureml-sdk-for-r/reference/r_environment.html).
+
+```{r}
+getEST = function(entry_script){
+  est <- estimator(source_directory = "train",
+                 entry_script = entry_script,
+                 script_params = list("--data_folder" = ds$path(target_path),
+                                      "--username" = username),
+                 compute_target = compute_target,
+                 environment = env)
+}
+
+est1 = getEST("train1.R")
+est2 = getEST("train2.R")
+est3 = getEST("train3.R")
+est4 = getEST("train4.R")
+est5 = getEST("train5.R")
+```
+
+
+
+### Submit the job on the remote cluster
+
+Finally submit the job to run on your cluster. `submit_experiment()` returns a Run object that you then use to interface with the run. In total, the first run takes **about 10 minutes**. But for later runs, the same Docker image is reused as long as the script dependencies don't change.  In this case, the image is cached and the container startup time is much faster.
+
+```{r submit_job}
+run1 <- submit_experiment(exp, est1, list("tag" = "basic"))
+run2 <- submit_experiment(exp, est2, list("tag" = "value"))
+run3 <- submit_experiment(exp, est3, list("tag" = "value"))
+run4 <- submit_experiment(exp, est4, list("tag" = "full"))
+run5 <- submit_experiment(exp, est5, list("tag" = "full", "tag" = "interactions"))
+```
+
+You can view the run’s details as a table. Clicking the “Web View” link provided will bring you to Azure Machine Learning studio, where you can monitor the run in the UI.
+
+```{r}
+plot_run_details(run1)
+```
+
+Model training happens in the background. Wait until the model has finished training before you run more code.
+
+```{r}
+wait_for_run_completion(run5, show_output = TRUE)
+```
+
+We can check the accuracy for our runs after they complete at `ml.azure.com`, or by querying the service directly:
+
+```{r metrics, eval=FALSE}
+metrics1 <- get_run_metrics(run1)
+
+```
+
+Metrics 2:
+
+```{r}
+metrics2 <- get_run_metrics(run2)
+
+print(metrics2)
+
+```
+
+```{r}
+metrics3 <- get_run_metrics(run3)
+
+print(metrics3)
+
+```
+
+```{r}
+metrics4 <- get_run_metrics(run4)
+
+print(metrics4)
+
+```
+
+```{r}
+metrics5 <- get_run_metrics(run5)
+
+print(metrics5)
+
+print(metrics5['R^2'][1])
+
+val = metrics5$`R^2`
+
+print(typeof(val))
+
+```
+
+```{r}
+runs <- c(run1, run2, run3, run4, run5)
+best_rsquared = 0.0
+
+for (run in runs) {
+   metrics = get_run_metrics(run)
+   val = metrics$`R^2`
+   if (is.null(val) == FALSE){
+     if (val > best_rsquared){
+       best_run = run
+       best_rsquared = val
+     }
+   }
+}
+
+print(get_run_metrics(best_run))
+```
+If you've run multiple experiments (say, using differing variables, algorithms, or hyperparamers), you can use the metrics from each run to compare and choose the model you'll use in production.
+
+### Get the trained model
+You can retrieve the trained model and look at the results in your local R session. The following code will download the contents of the `./outputs` directory, which includes the model file.
+
+```{r retrieve_model, eval=FALSE}
+download_files_from_run(best_run, prefix="outputs/")
+taxi_model <- readRDS("outputs/model.rds")
+summary(taxi_model)
+```
+
+You can use this model to make new predictions:
+
+```{r manual_predict, eval=FALSE}
+#vendorID,passengerCount,tripDistance,totalAmount,month_num,day_of_month,day_of_week,hour_of_day
+nd <- data.frame( # valid values shown below
+ vendorID = "1",
+ passengerCount=1,
+ tripDistance=4.2,
+ month_num = "1",
+ day_of_month = "4",
+ day_of_week = "1",
+ hour_of_day = "18"
+ )
+
+## predicted probability of death for these variables, as a percentage
+as.numeric(predict(taxi_model,nd, type="response"))
+```
+
+## Deploy as a web service
+
+With your model, you can predict the danger of death from a collision. Use Azure ML to deploy your model as a prediction service. In this tutorial, you will deploy the web service in [Azure Container Instances](https://docs.microsoft.com/en-us/azure/container-instances/) (ACI).
+
+### Register the model
+
+First, register the model you downloaded to your workspace with [`register_model()`](https://azure.github.io/azureml-sdk-for-r/reference/register_model.html). A registered model can be any collection of files, but in this case the R model object is sufficient. Azure ML will use the registered model for deployment.
+
+```{r register_model, eval=FALSE}
+model_name = paste(username, "taxi-model", sep="-")
+model <- register_model(ws, 
+                        model_path = "outputs/model.rds", 
+                        model_name = model_name,
+                        description = "Predict probablity of auto accident")
+
+```
+
+#####################################
+#####################################
+
+### Define the inference dependencies
+To create a web service for your model, you first need to create a scoring script (`entry_script`), an R script that will take as input variable values (in JSON format) and output a prediction from your model. For this tutorial, use the provided scoring file `accident_predict.R`. The scoring script must contain an `init()` method that loads your model and returns a function that uses the model to make a prediction based on the input data. See the [documentation](https://azure.github.io/azureml-sdk-for-r/reference/inference_config.html#details) for more details.
+
+Next, define an Azure ML **environment** for your script's package dependencies. With an environment, you specify R packages (from CRAN or elsewhere) that are needed for your script to run. You can also provide the values of environment variables that your script can reference to modify its behavior. By default, Azure ML will build the same default Docker image used with the estimator for training. Since the tutorial has no special requirements, create an environment with no special attributes.
+
+
+If you want to use your own Docker image for deployment instead, specify the `custom_docker_image` parameter. See the [`r_environment()`](https://azure.github.io/azureml-sdk-for-r/reference/r_environment.html) reference for the full set of configurable options for defining an environment.
+
+Now you have everything you need to create an **inference config** for encapsulating your scoring script and environment dependencies.
+
+``` {r create_inference_config, eval=FALSE}
+inference_config <- inference_config(
+  entry_script = "predict.R",
+  source_directory = "deploy",
+  environment = env)
+```
+
+### Deploy to ACI
+In this tutorial, you will deploy your service to ACI. This code provisions a single container to respond to inbound requests, which is suitable for testing and light loads. See [`aci_webservice_deployment_config()`](https://azure.github.io/azureml-sdk-for-r/reference/aci_webservice_deployment_config.html) for additional configurable options. (For production-scale deployments, you can also [deploy to Azure Kubernetes Service](https://azure.github.io/azureml-sdk-for-r/articles/deploy-to-aks.html).)
+
+``` {r create_aci_config, eval=FALSE}
+aci_config <- aci_webservice_deployment_config(cpu_cores = 1, memory_gb = 0.5)
+```
+
+```{r}
+aci_config
+```
+
+Now you deploy your model as a web service. Deployment **can take several minutes**. 
+
+
+```{r deploy_service, eval=FALSE}
+service_name <- paste(username, "taxi-cost-pred", sep= '-' )
+aci_service <- deploy_model(ws, 
+                            service_name, 
+                            list(model), 
+                            inference_config, 
+                            aci_config)
+
+```
+
+```{r}
+wait_for_deployment(aci_service, show_output = TRUE)
+```
+
+If you encounter any issue in deploying the web service, please visit the [troubleshooting guide](https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-troubleshoot-deployment).
+
+## Test the deployed service
+
+Now that your model is deployed as a service, you can test the service from R using [`invoke_webservice()`](https://azure.github.io/azureml-sdk-for-r/reference/invoke_webservice.html).  Provide a new set of data to predict from, convert it to JSON, and send it to the service.
+
+```{r test_deployment, eval=FALSE}
+library(jsonlite)
+
+newdata <- data.frame( # valid values shown below
+ vendorID = "1",
+ passengerCount=1,
+ tripDistance=4.2,
+ month_num = "1",
+ day_of_month = "4",
+ day_of_week = "1",
+ hour_of_day = "18"
+ )
+
+prob <- invoke_webservice(aci_service, toJSON(newdata))
+prob
+```
+```{r}
+aci_service
+```
+```{r}
+aci_service$scoring_uri
+```
+
+```{r}
+aks_target <- create_aks_compute(ws, cluster_name = 'myakscluster')
+
+wait_for_provisioning_completion(aks_target, show_output = TRUE)
+```
+```{r}
+r_env <- r_environment(name = "deploy_env")
+inference_config <- inference_config(
+  entry_script = "predict.R",
+  source_directory = "deploy",
+  environment = r_env)
+aks_config <- aks_webservice_deployment_config(cpu_cores = 1, memory_gb = 1)
+
+aks_service <- deploy_model(ws, 
+                            'my-new-aksservice', 
+                            models = list(model), 
+                            inference_config = inference_config, 
+                            deployment_config = aks_config,
+                            deployment_target = aks_target)
+
+wait_for_deployment(aks_service, show_output = TRUE)
+```
+
+```{r}
+library(jsonlite)
+
+
+newdata <- data.frame( # valid values shown below
+ vendorID = "1",
+ passengerCount=1,
+ tripDistance=4.2,
+ month_num = "1",
+ day_of_month = "4",
+ day_of_week = "1",
+ hour_of_day = "18"
+ )
+
+predicted_val <- invoke_webservice(aks_service, toJSON(newdata))
+message(predicted_val)
+```
+
