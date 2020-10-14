@@ -1,9 +1,9 @@
 ---
-title: Azure Machine Learning Hackathon
+Azure Machine Learning Hackathon
 ---
 
-Objective:
-==========
+#Objective:
+
 
 Objective of this hackathon is to familiarize you with Azure ML looking at a
 basic linear regression problem. The first day we will familiar ourselves with
@@ -20,8 +20,8 @@ and then applying same concepts in python showcasing AutoML capabilities.
 
 \-Leveraging AML Compute
 
-References:
-===========
+#References:
+
 
 <https://github.com/Azure/MachineLearningNotebooks/tree/master/how-to-use-azureml>
 
@@ -89,3 +89,18 @@ The Workspace
     Let’s click on the create button.
 
     ![](media/6b6aea23628081572dab1f106eba0888.png)
+
+Let’s get the source files.
+
+If you navigate to the notebooks, we are able to leverage git and clone the
+resources which will then be available to our compute cluster.
+
+Click on the git icon and let’s clone our notebooks
+
+
+
+![](media/4ae2c83ab98f1e823f49d4e2820cad73.png)
+
+```
+Git clone https://github.com/memasanz/AMLHack.git
+```
