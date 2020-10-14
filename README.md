@@ -104,3 +104,18 @@ Click on the git icon and let’s clone our notebooks
 ```
 Git clone https://github.com/memasanz/AMLHack.git
 ```
+
+Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SKD so you can run it on a compute node in Azure, or on your local PC.  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
+
+![](media/07_Compute.png)
+
+Let's head over to R-Studio
+
+![](media/08_Compute.png)
+
+R-Studio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typical house keeping for your session.
+
+1.  Set your working directory.
+
+
+
