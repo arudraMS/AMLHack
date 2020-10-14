@@ -117,5 +117,29 @@ R-Studio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typ
 
 1.  Set your working directory.
 
+![](media/09_SetWorkingDirectory.png)
+
+2.  Let's run some code.
+
+```{r}
+username <- "memasanz"
+```
+
+3.  Notice that for the code snippet loading the libaries, we will need to install those.  The azuremlsdk is already installed for us, but we need to install the lubridate and readr packages on this vm.
+
+```{r}
+library(azuremlsdk)
+library(lubridate)
+library(readr)
+```
+
+![](media/10_InstallPackages.PNG)
+
+![](media/11_Login.png)
+
+![](media/12_Login.png)
+
+
+
 
 
