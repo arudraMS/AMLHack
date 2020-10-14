@@ -135,9 +135,12 @@ library(readr)
 
 ![](media/10_InstallPackages.PNG)
 
-![](media/11_Login.png)
+![](media/11_Login.PNG)
 
-![](media/12_Login.png)
+![](media/12_Login.PNG)
+
+
+
 
 
 
