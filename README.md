@@ -102,7 +102,7 @@ Click on the git icon and let’s clone our notebooks
 ![](media/4ae2c83ab98f1e823f49d4e2820cad73.png)
 
 ```
-Git clone https://github.com/memasanz/AMLHack.git
+git clone https://github.com/memasanz/AMLHack.git
 ```
 
 Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SKD so you can run it on a compute node in Azure, or on your local PC.  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
@@ -248,6 +248,13 @@ Now that the runs have been submitted, lets discuss what we submitted, and submi
 ![](media/26_builds.PNG)
 
 ![](media/27_builds.PNG)
+
+###Deploy as a webservice
+
+![](media/28_models.PNG)
+
+![](media/29_deploy.PNG)
+
 
 
 
