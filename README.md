@@ -2,7 +2,7 @@
 Azure Machine Learning Hackathon
 ---
 
-#Objective:
+# Objective:
 
 
 Objective of this hackathon is to familiarize you with Azure ML looking at a
@@ -20,7 +20,7 @@ and then applying same concepts in python showcasing AutoML capabilities.
 
 \-Leveraging AML Compute
 
-#References:
+# References:
 
 
 <https://github.com/Azure/MachineLearningNotebooks/tree/master/how-to-use-azureml>
