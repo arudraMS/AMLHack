@@ -226,6 +226,32 @@ Registering a dataset provides with traceability to your dataset, and profiling 
 ![](media/21_profile.PNG)
 
 
+### Create R environment
+
+
+### Create Estimators
+
+### Submit your job
+
+Go to your experiment, and check out your runs.
+
+![](media/22_checkoutruns.PNG)
+
+![](media/23_runs.PNG)
+
+Now that the runs have been submitted, lets discuss what we submitted, and submitted to where? (This will take about 15 minutes to start running)
+
+![](media/24_runs.PNG)
+
+![](media/25_builds.PNG)
+
+![](media/26_builds.PNG)
+
+![](media/27_builds.PNG)
+
+
+
+
 
 
 
