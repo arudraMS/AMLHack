@@ -158,12 +158,16 @@ Now that the notebooks we need are there, let's head over to our compute node.  
 Let's head over to R-Studio
 
 | ![](media/08_Compute.PNG) |
+| ------ |
 
 R-Studio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typical house keeping for your session.
 
-1.  Set your working directory.
+1.  **Set your working directory**.
 
-![](media/09_SetWorkingDirectory.png)
+Notebooks and R scripts are stored in the default storage account of your workspace in Azure file share. These files are located under your “User files” directory. This storage makes it easy to share notebooks between compute instances. The storage account also keeps your notebooks safely preserved when you stop or delete a compute instance.
+
+| ![](media/09_SetWorkingDirectory.PNG) |
+| ------ |
 
 2.  Let's run some code.
 
