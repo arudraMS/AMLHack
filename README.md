@@ -470,6 +470,22 @@ Notice the number of nodes that we use during our training goes up.
 
 ### Deploy as a webservice
 
+#### Register the Model
+
+A registered model is a logical container for one or more files that make up your model. For example, if you have a model that's stored in multiple files, you can register them as a single model in the workspace. After you register the files, you can then download or deploy the registered model and receive all the files that you registered.
+
+You need to define the **inference config**. An inference configuration describes how to set up the web-service containing your model. It's used later, when you deploy the model.
+
+In it you define an entry script
+
+The **entry script** receives data submitted to a deployed web service and passes it to the model. It then takes the response returned by the model and returns that to the client. The script is specific to your model. It must understand the data that the model expects and returns.
+
+The two things you need to accomplish in your entry script are:
+
+Loading your model (using a function called **init()**)
+Running your model on input data (using a function called **run()**)
+Let's go through these steps in detail.
+
 ![](media/28_models.PNG)
 
 ![](media/29_deploy.PNG)
