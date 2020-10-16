@@ -18,7 +18,7 @@ Today we will capture:
 1. Connecting to a Workspace
 2. Creating a compute instance
 3. Cloning notebooks from a github repo
-4. Connecting into R-Studio
+4. Connecting into RStudio
 5. Leveraging the R-SDK to:
 	- Connect to Workspace
 	- Create an experiment
@@ -126,18 +126,26 @@ Use a compute instance as your fully configured and managed development environm
 | ------ |
 
 
-Let’s click on the create button.
+Let’s click on the create button.  This step typically will take about 5 minutes to spin up a new compute instance.
 
 | ![](media/6b6aea23628081572dab1f106eba0888.png) |
 | ------ |
+
+After your compute instance is up and rolling, we can connect with git to this repo.  
+
 
 
 This hackathon has source code in this repo that we will be leveraging.  Given the nice integration with git found directly in the Azure ML workspace, we can easily clone this repo directly in the workpace.  Head over to the Notebooks section by clicking the `Notebooks` icon.
 
 Let’s get the source files.
 
+
 If you navigate to the notebooks, we are able to leverage git and clone the
 resources which will then be available to our compute cluster.
+
+
+! ![](media/08b_Clone.PNG) |
+| ------ |
 
 Click on the git icon and let’s clone our notebooks
 
@@ -145,22 +153,28 @@ Click on the git icon and let’s clone our notebooks
 git clone https://github.com/memasanz/AMLHack.git
 ```
 
+After cloning, you can click on the refresh icon to ensure you are able to see the repo.
+| ![](media/08c_refresh.PNG)
+| ------ |
+
+
+
 | ![](media/4ae2c83ab98f1e823f49d4e2820cad73.png) |
 | ------ |
 
 
 
-Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SDK so you can run it on a compute node in Azure, or on your local PC.  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
+Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SDK- providing extensibility to run your code in a compute instance or your local machine (VSCode Azure ML extension is *tight*).  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
 
 | ![](media/07_Compute.PNG) |
 | ------ |
 
-Let's head over to R-Studio
+Let's head over to RStudio by clicking on the RStudio hyperlink.
 
 | ![](media/08_Compute.PNG) |
 | ------ |
 
-R-Studio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typical house keeping for your session.
+RStudio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typical house keeping for your session.
 
 1.  **Set your working directory**.
 
@@ -170,6 +184,8 @@ Notebooks and R scripts are stored in the default storage account of your worksp
 | ------ |
 
 2.  Let's run some code.
+
+Head over to the file '
 
 ```{r}
 username <- "memasanz"
