@@ -376,6 +376,7 @@ A TabularDataset represents data in a tabular format by parsing the provided fil
 Additional datasets capabilities can be found in the following documentation:
 
 [Version and track dataset lineage](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-version-track-datasets).
+
 [Monitor your dataset to help with data drift detection](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-monitor-datasets).
 
 
