@@ -458,6 +458,11 @@ Now you have everything you need to create an **inference config** for encapsula
 
 ``` {r create_inference_config, eval=FALSE}
 r_env <- r_environment(name = "deploy_env")
+register_environment(environment=r_env, workspace=ws)
+
+```
+
+```{r}
 
 inference_config <- inference_config(
   entry_script = "predict.R",
