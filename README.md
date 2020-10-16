@@ -238,7 +238,8 @@ You will head over to <https://microsoft.com/devicelogin> with the code provided
 
 So you can paste it into the code box.
 
-![](media/12_Login.PNG)
+| ![](media/12_Login.PNG) |
+| ------ |
 
 Note the commented out code to write a config file.  You can see that updated file over in the Azure ML workspace in a folder.  This config file is pretty slick.  It has the configuation information needed to connect into your workspace if you were to connect from a resource outside of Azure ML - (using a local machine, databricks etc.) 
 
@@ -298,15 +299,15 @@ https://azure.github.io/azureml-sdk-for-r/reference/create_aml_compute.html
 
 Typically, setting the idle_seconds_before_scaledown is helpful to keep costs down.  For this we are using small machines, and we want to make the best use of time, so that was not set.  Today so we are not waiting on this cluster, we are going to set the min and max cluster size to be 1.  (Typical wait time = 5 minutes)  If we set the min node to be 0 with a idel_seconds_before_scaledown, then the machine is a best practice.  Because we did not do that, we need to rememeber to delete this machine when we are done for the day.
 
-![](media/16_Compute.PNG)
+| ![](media/16_Compute.PNG) |
 | ------ |
 
-![](media/17_Compute.PNG)
+| ![](media/17_Compute.PNG) |
 | ------ |
 
 We will see that the creation of the compute completed.
 
-![](media/18_ComputeCreated.PNG)
+| ![](media/18_ComputeCreated.PNG) |
 | ------ |
 
 ### Working data
@@ -340,6 +341,7 @@ saveRDS(df, file=file1)
 
 print(file)
 ```
+
 | ![](media/19_train.PNG) |
 | ------ |
 
@@ -380,9 +382,13 @@ Additional datasets capabilities can be found in the following documentation:
 [Monitor your dataset to help with data drift detection](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-monitor-datasets).
 
 
-![](media/20_registered_dataset.PNG)
+| ![](media/20_registered_dataset.PNG) |
+| ------ |
 
-![](media/21_profile.PNG)
+Head over to the workspace and check out the `Explore` tab on your dataset to look at the profile that was generated.
+
+| ![](media/21_profile.PNG) |
+| ------ |
 
 
 ### Create R environment
