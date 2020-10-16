@@ -128,7 +128,11 @@ Use a compute instance as your fully configured and managed development environm
 
 Let’s click on the create button.
 
-    ![](media/6b6aea23628081572dab1f106eba0888.png)
+| ![](media/6b6aea23628081572dab1f106eba0888.png) |
+| ------ |
+
+
+This hackathon has source code in this repo that we will be leveraging.  Given the nice integration with git found directly in the Azure ML workspace, we can easily clone this repo directly in the workpace.  Head over to the Notebooks section by clicking the `Notebooks` icon.
 
 Let’s get the source files.
 
@@ -137,21 +141,23 @@ resources which will then be available to our compute cluster.
 
 Click on the git icon and let’s clone our notebooks
 
-
-
-![](media/4ae2c83ab98f1e823f49d4e2820cad73.png)
-
 ```
 git clone https://github.com/memasanz/AMLHack.git
 ```
 
-Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SKD so you can run it on a compute node in Azure, or on your local PC.  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
+| ![](media/4ae2c83ab98f1e823f49d4e2820cad73.png) |
+| ------ |
 
-![](media/07_Compute.png)
+
+
+Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SDK so you can run it on a compute node in Azure, or on your local PC.  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
+
+| ![](media/07_Compute.PNG) |
+| ------ |
 
 Let's head over to R-Studio
 
-![](media/08_Compute.png)
+| ![](media/08_Compute.PNG) |
 
 R-Studio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typical house keeping for your session.
 
