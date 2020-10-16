@@ -21,11 +21,11 @@ Today we will capture:
 3. Cloning notebooks from a github repo
 4. Connecting into R-Studio
 5. Leveraging the R-SDK to:
-	-Connect to Workspace
-	-Create an experiment
-	-Create compute for training
-	-Registering Datasets
-	-Creating estimators
+	- Connect to Workspace
+	- Create an experiment
+	- Create compute for training
+	- Registering Datasets
+	- Creating estimators
 
 \-Working with Datasets
 
