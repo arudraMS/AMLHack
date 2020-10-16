@@ -6,15 +6,26 @@ Azure Machine Learning Hackathon
 
 
 Objective of this hackathon is to familiarize you with Azure ML looking at a
-basic linear regression problem. The first day we will familiar ourselves with
-the tools using Azure ML R SDK. On the 2nd day we will move towards using the
+basic linear regression problem. The first day we will focus on the tools leveraging the Azure ML R SDK. 
+On the 2nd day we will move towards using the
 python SDK, and look at Auto ML.
 
 The R SDK is in preview, which means it is not intended for production use,
 however, this hackathon will provide an introduction into Azure ML leveraging R,
 and then applying same concepts in python showcasing AutoML capabilities.
 
-\-Connecting to a Workspace
+Today we will capture:
+
+1. Connecting to a Workspace
+2. Creating a compute instance
+3. Cloning notebooks from a github repo
+4. Connecting into R-Studio
+5. Leveraging the R-SDK to:
+	-Connect to Workspace
+	-Create an experiment
+	-Create compute for training
+	-Registering Datasets
+	-Creating estimators
 
 \-Working with Datasets
 
@@ -22,45 +33,40 @@ and then applying same concepts in python showcasing AutoML capabilities.
 
 # References:
 
-
 <https://github.com/Azure/MachineLearningNotebooks/tree/master/how-to-use-azureml>
 
 <https://azure.github.io/azureml-sdk-for-r/reference/index.html>
 
 <https://pypi.org/project/azureml-sdk/>
 
-Steps after this hackathon:
----------------------------
-
-\-Work with your team to setup a dev environment with custom roles based on your
+## Steps after this hackathon:
+- Work with your team to setup a dev environment with custom roles based on your
 business needs and the roles within your teams.
+- Productionizing Code
+- Building Azure ML Pipelines
 
-\-Productionizing Code
-
-\-Building Azure ML Pipelines
-
-Day 1:   R & Azure ML Workspace 9-2
+## Day 1 Agenda:   R & Azure ML Workspace 9-2
 -----------------------------------
 
->   1. Introductions 9-9:30
+1. Introductions 9-9:30
 
->   2. Workspace overview Import Notebook 9:30-10:00
+2. Workspace overview Import Notebook 9:30-10:00
 
->   2. Connecting to workspace in RStudio 10:00-10:30
+3. Connecting to workspace in RStudio 10:00-10:30
 
->   3. Loading Data 10:30-11:00
+4. Loading Data 10:30-11:00
 
->   4. Creating Compute Resources 11:00-11:30
+5. Creating Compute Resources 11:00-11:30
 
->   *Lunch 11:30-12:30*
+6. *Lunch 11:30-12:30*
 
->   5. Training – Experiments & Runs 12:30-1:00
+7. Training – Experiments & Runs 12:30-1:00
 
->   6. Deploying & Testing a model 1:00-2:00
+8. Deploying & Testing a model 1:00-2:00
 
  
 
-Day 2: Python & Auto ML
+## Day 2 Agenda:   Python & AutoML 9-2
 -----------------------
 
 1.  Auto ML through Designer 9:00-10:00
@@ -68,25 +74,35 @@ Day 2: Python & Auto ML
 2.  Connecting to workspace in Jupyter Notebook, Loading Data, Creating Compute
     Resources 10:00-11:30
 
->   *Lunch 11:30-12:30*
+3.   *Lunch 11:30-12:30*
 
-1.  Deploying & Testing best model
+4.  Deploying & Testing best model
 
-2.  Training Auto ML Notebook– AutoML
+5.  Training Auto ML Notebook– AutoML
 
-![](media/c69b9bbc02702811bede4c5301949ad0.png)
+### Let's get started
 
-The Workspace
 
-![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png)
 
-1.  Let’s get into the workspace with the link provided.
+|![](media/c69b9bbc02702811bede4c5301949ad0.png)|
+-
+
+### 1. The Workspace
+
+|![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png)|
+-
+
+1.1.  Let’s get into the workspace with the link provided.
+
+Notice the navigation on the left side.
 
     ![](media/4ddfa3cb3ee53c076bcd24d38a749703.png)
+	
+Let's start with creating our compute instance.
 
     ![](media/e156bb54942d9e34fd77be2795b024bd.png)
 
-    Let’s click on the create button.
+Let’s click on the create button.
 
     ![](media/6b6aea23628081572dab1f106eba0888.png)
 
