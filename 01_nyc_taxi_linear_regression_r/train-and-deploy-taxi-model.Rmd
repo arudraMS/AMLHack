@@ -15,7 +15,7 @@ In this tutorial, you learn the following tasks:
 * Load data and prepare for training
 * Upload data to the datastore so it is available for remote training
 * Create a compute resource
-* --Train a caret model to predict probability of fatality
+* Train a linear regression model to predict taxi fair
 * Deploy a prediction endpoint
 * Test the model from R
 
@@ -38,9 +38,8 @@ The setup for your development work in this tutorial includes the following acti
 
 
 ### Install required packages
-This tutorial assumes you already have the Azure ML SDK installed. 
-(If you are running this vignette from an RStudio instance in an Azure
-ML Compute Instance, the package is already installed for you.)
+This tutorial assumes you already have the Azure ML SDK installed given we are inside a compute instance created inside the Azure ML workspace.
+
 Go ahead and load the **azuremlsdk** package.
 
 ```{r}
@@ -49,7 +48,7 @@ library(lubridate)
 library(readr)
 ```
 
-The training and scoring scripts (`accidents.R` and `accident_predict.R`) have some additional dependencies. If you plan on running those scripts locally, make sure you have those required packages as well.
+The training and scoring scripts (`train1.R` - `train5.R` and `predict.R`) have some additional dependencies. If you plan on running those scripts locally, make sure you have those required packages as well.
 
 ### Load your workspace
 Instantiate a workspace object from your existing workspace. The following code will load the workspace details from the **config.json** file. You can also retrieve a workspace using [`get_workspace()`](https://azure.github.io/azureml-sdk-for-r/reference/get_workspace.html).
@@ -59,11 +58,12 @@ You will be asked to login, and you may get a warning message
 ws <- load_workspace_from_config()
 ws
 
+
 write_workspace_config(ws, path = "./train", file_name = NULL)
 ```
 
 ### Create an experiment
-An Azure ML experiment tracks a grouping of runs, typically from the same training script. Create an experiment to track the runs for training the caret model on the accidents data.
+An Azure ML experiment tracks a grouping of runs, typically from the same training script. Create an experiment to track the runs for training the linear regression model on the taxi data.
 
 ```{r create_experiment}
 experiment_name <- paste(username, "taxi-experiment-r", sep = "-") 
@@ -71,7 +71,7 @@ exp <- experiment(ws, experiment_name)
 ```
 
 ### Create a compute target
-By using Azure Machine Learning Compute (AmlCompute), a managed service, data scientists can train machine learning models on clusters of Azure virtual machines. Examples include VMs with GPU support. In this tutorial, you create a single-node AmlCompute cluster as your training environment. The code below creates the compute cluster for you if it doesn't already exist in your workspace.
+By using Azure Machine Learning Compute (AmlCompute), a managed service, data scientists can train machine learning models on clusters of Azure virtual machines. Examples include VMs with GPU support. In this tutorial, you create a 3-node AmlCompute cluster as your training environment. The code below creates the compute cluster for you if it doesn't already exist in your workspace.
 
 You may need to wait a few minutes for your compute cluster to be provisioned if it doesn't already exist.
 
@@ -83,18 +83,20 @@ if (is.null(compute_target)) {
   compute_target <- create_aml_compute(workspace = ws,
                                        cluster_name = cluster_name,
                                        vm_size = vm_size,
-                                       min_nodes = 1,
-                                       max_nodes = 1)
+                                       min_nodes = 0,
+                                       max_nodes = 3,
+                                       idle_seconds_before_scaledown = 1500)
   
   wait_for_provisioning_completion(compute_target, show_output = TRUE)
 }
 ```
-This cluster has a maximum size of three nodes, but only one will be provisioned for now. The second will only be provisioned as needed, and will automatically de-provision when no longer in use. You can even set `min_nodes=0` to make the first node provision on demand as well (and experiments will wait for the node to provision before starting).
+
+This cluster has a maximum size of 3 nodes, but only one will be provisioned for now. The second will only be provisioned as needed, and will automatically de-provision when no longer in use. We set `min_nodes=0` to make the first node provision on demand as well (and experiments will wait for the node to provision before starting).
 
 ## Prepare data for training
-This tutorial uses data from the US [National Highway Traffic Safety Administration](https://cdan.nhtsa.gov/tsftables/tsfar.htm)  
-(with thanks to [Mary C. Meyer and Tremika Finney](https://www.stat.colostate.edu/~meyer/airbags.htm)).
-This dataset includes data from over 25,000 car crashes in the US, with variables you can use to predict the likelihood of a fatality. First, import the data into R and transform it into a new dataframe `accidents` for analysis, and export it to an `Rdata` file.
+This tutorial uses data from  [Azure Open Datasets](https://azure.microsoft.com/en-us/services/open-datasets/)  
+
+First, import the data that includes 24,000 rows and 24 columsn into R and transform it into a new dataframe `df` for analysis, and export it to an `Rdata` file.
 
 ```{r}
 dataset <- create_tabular_dataset_from_parquet_files(path="https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/green_taxi_data.parquet",
@@ -111,7 +113,9 @@ Number of variables in the datset **`r ncol(df)`**
 
 ```{r}
 num_cols = ncol(df)
-print(num_cols)
+num_rows = nrow((df))
+print(paste("rows: ", num_rows, sep=''))
+print(paste("columns: ", num_cols, sep=''))
 ```
 
 ## Create time based features
@@ -127,7 +131,6 @@ df$hour_of_day = hour(as.POSIXlt(df$lpepPickupDatetime))
 num_cols = ncol(df)
 print(num_cols)
 ```
-
 
 
 Number of variables in the datset **`r ncol(df)`**, let's remove some columns that we don't need
@@ -218,13 +221,14 @@ write_csv(df, file2)
 ```
 
 ### Upload data to the datastore
-Upload data to the cloud so that it can be access by your remote training environment. Each Azure ML workspace comes with a default datastore that stores the connection information to the Azure blob container that is provisioned in the storage account attached to the workspace. The following code will upload the accidents data you created above to that datastore.
+Upload data to the cloud so that it can be access by your remote training environment, or accessed by other team members. Not only does this make your dataset easily accessible, but it provides traceability to your dataset.  Each Azure ML workspace comes with a default datastore that stores the connection information to the Azure blob container that is provisioned in the storage account attached to the workspace. The following code will upload the data you created above to that datastore.
 
 ```{r upload_data}
 ds <- get_default_datastore(ws)
 
 target_path <- paste(username, "greentaxi", sep="-")
 ```
+
 
 ```{r upload to datastore}
 files = c(file1, file2)
@@ -256,7 +260,7 @@ dataset <- create_tabular_dataset_from_delimited_files(
 ```
 
 ```{r}
-dataset_name <= paste(username,"green-taxi", sep="-" )
+dataset_name <- paste(username,"green-taxi", sep="-" )
 
 register_dataset(
   workspace=ws,
@@ -271,9 +275,9 @@ register_dataset(
 
 The variable $target_path$ will be used later **`r target_path`**
 
-### Create am r environment
+### Create an r environment
 
-Next, define an Azure ML **environment** for your script's package dependencies. With an environment, you specify R packages (from CRAN or elsewhere) that are needed for your script to run. You can also provide the values of environment variables that your script can reference to modify its behavior. By default, Azure ML will build the same default Docker image used with the estimator for training. Since the tutorial has no special requirements, create an environment with no special attributes.
+Next, define an Azure ML **environment** for your script's package dependencies. With an environment, you specify R packages (from CRAN or elsewhere) that are needed for your script to run. You can also provide the values of environment variables that your script can reference to modify its behavior. By default, Azure ML will build the same default Docker image used with the estimator for training. 
 
 [Link](https://azure.github.io/azureml-sdk-for-r/reference/cran_package.html).
 
@@ -285,7 +289,7 @@ env <- r_environment(name = "r_env",
                      cran_packages = list(pkg1, pkg2))
 ```
 
-### Create an Estimator
+### Create an Estimator/Script Run Config
 
 An Azure ML estimator encapsulates the run configuration information needed for executing a training script on the compute target. Azure ML runs are run as containerized jobs on the specified compute target. By default, the Docker image built for your training job will include R, the Azure ML SDK, and a set of commonly used R packages. See the full list of default packages included [here](https://azure.github.io/azureml-sdk-for-r/reference/r_environment.html).
 
@@ -336,6 +340,7 @@ We can check the accuracy for our runs after they complete at `ml.azure.com`, or
 
 ```{r metrics, eval=FALSE}
 metrics1 <- get_run_metrics(run1)
+print(metrics1)
 
 ```
 
@@ -515,6 +520,10 @@ aci_service
 aci_service$scoring_uri
 ```
 
+
+### Extra Credit
+
+If there is time, we can also look at levering an AKS cluster for deployment.
 ```{r}
 aks_target <- create_aks_compute(ws, cluster_name = 'myakscluster')
 

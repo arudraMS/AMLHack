@@ -416,19 +416,25 @@ Submitted the run will submit to the experiment the training of a the model.
 
 Go to your experiment, and check out your runs.
 
-![](media/22_checkoutruns.PNG)
+| ![](media/22_checkoutruns.PNG) |
+| ------ |
 
-![](media/23_runs.PNG)
+| ![](media/23_runs.PNG) |
+| ------ |
 
 Now that the runs have been submitted, lets discuss what we submitted, and submitted to where? (This will take about 15 minutes to start running)
 
-![](media/24_runs.PNG)
+| ![](media/24_runs.PNG) |
+| ------ |
 
-![](media/25_builds.PNG)
+| ![](media/25_builds.PNG) |
+| ------ |
 
-![](media/26_builds.PNG)
+| ![](media/26_builds.PNG) |
+| ------ |
 
-![](media/27_builds.PNG)
+| ![](media/27_builds.PNG) |
+| ------ |
 
 After the runs have completed, we can review the metrics & pull out the best run based on the metric that we would like to look at.  In the training script, metrics are logged leveraging the R SDK as shown below.
 
@@ -455,6 +461,11 @@ for (run in runs) {
 
 print(get_run_metrics(best_run))
 ```
+
+Notice the number of nodes that we use during our training goes up.
+
+| ![](media/Nodes.PNG) |
+| ------ |
 
 
 ### Deploy as a webservice
