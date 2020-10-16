@@ -347,7 +347,7 @@ We can save it both as RD and CSV (look inside the train folder and you will see
 
 Recall that the files are saved from our folder to a file share in Azure.
 
-| ![](media/SavedToFileShare.PNG) |
+| ![](media/20_SavedToFileShare.PNG) |
 | ------ |
 
 ### Upload Data to datastore.
@@ -355,6 +355,30 @@ Recall that the files are saved from our folder to a file share in Azure.
 
 ### Register the Dataset
 Registering a dataset provides with traceability to your dataset, and profiling along with code to consume the dataset.
+
+Azure Machine Learning datasets aren't copies of your data. By creating a dataset, you create a reference to the data in its storage service, along with a copy of its metadata.
+
+Because datasets are lazily evaluated, and the data remains in its existing location, you
+
+Incur no extra storage cost.
+Don't risk unintentionally changing your original data sources.
+Improve ML workflow performance speeds.
+To interact with your data in storage, create a dataset to package your data into a consumable object for machine learning tasks. Register the dataset to your workspace to share and reuse it across different experiments without data ingestion complexities.
+
+Datasets can be created from local files, public urls, Azure Open Datasets, or Azure storage services via datastores.
+
+There are 2 types of datasets:
+
+A FileDataset references single or multiple files in your datastores or public URLs. If your data is already cleansed and ready to use in training experiments, you can download or mount files referenced by FileDatasets to your compute target.
+
+A TabularDataset represents data in a tabular format by parsing the provided file or list of files. You can load a TabularDataset into a pandas or Spark DataFrame for further manipulation and cleansing. For a complete list of data formats you can create TabularDatasets from, see the TabularDatasetFactory class.
+
+Additional datasets capabilities can be found in the following documentation:
+
+[Version and track dataset lineage](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-version-track-datasets).
+[Monitor your dataset to help with data drift detection](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-monitor-datasets).
+
+
 ![](media/20_registered_dataset.PNG)
 
 ![](media/21_profile.PNG)
