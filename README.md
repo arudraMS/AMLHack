@@ -97,18 +97,34 @@ Once you have a model you like, you register it with the workspace. You then use
 | ![](media/30_workspace.PNG) |
 | ------ |
 
+Heading into the workspace from your URL we can enter the Azure ML Studio.
+1.1.  Let’s get into the workspace with the link provided.
+
 | ![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png) |
 | ------ |
 
-1.1.  Let’s get into the workspace with the link provided.
 
 Notice the navigation on the left side.
 
-    ![](media/4ddfa3cb3ee53c076bcd24d38a749703.png)
-	
-Let's start with creating our compute instance.
+| ![](media/4ddfa3cb3ee53c076bcd24d38a749703.png) |
+| ------ |
 
-    ![](media/e156bb54942d9e34fd77be2795b024bd.png)
+
+	
+### The compute instance.
+
+An Azure Machine Learning compute instance is a managed cloud-based workstation for data scientists.
+
+Compute instances make it easy to get started with Azure Machine Learning development as well as provide management and enterprise readiness capabilities for IT administrators.
+
+Use a compute instance as your fully configured and managed development environment in the cloud for machine learning. They can also be used as a compute target for training and inferencing for development and testing purposes.
+
+<https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-instance>
+
+
+| ![](media/e156bb54942d9e34fd77be2795b024bd.png) |
+| ------ |
+
 
 Let’s click on the create button.
 
