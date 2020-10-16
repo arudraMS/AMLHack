@@ -299,18 +299,34 @@ https://azure.github.io/azureml-sdk-for-r/reference/create_aml_compute.html
 Typically, setting the idle_seconds_before_scaledown is helpful to keep costs down.  For this we are using small machines, and we want to make the best use of time, so that was not set.  Today so we are not waiting on this cluster, we are going to set the min and max cluster size to be 1.  (Typical wait time = 5 minutes)  If we set the min node to be 0 with a idel_seconds_before_scaledown, then the machine is a best practice.  Because we did not do that, we need to rememeber to delete this machine when we are done for the day.
 
 ![](media/16_Compute.PNG)
+| ------ |
 
 ![](media/17_Compute.PNG)
+| ------ |
 
 We will see that the creation of the compute completed.
 
 ![](media/18_ComputeCreated.PNG)
+| ------ |
 
 ### Working data
 
 Move through notebook as it pulls a dataset in and begins the cleansing process.
 
-After data is cleansed, we will save it to a file.
+```{r}
+dataset <- create_tabular_dataset_from_parquet_files(path="https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/green_taxi_data.parquet",
+                                                validate = TRUE,
+                                                include_path = FALSE,
+                                                set_column_types = NULL,
+                                                partition_format = NULL
+)
+
+df <- load_dataset_into_data_frame(dataset,on_error = "null",out_of_range_datetime = "null")
+```
+
+
+After data is cleansed, we will save it to a file.  We can save it to an Rd file as well as to a csv file.
+
 
 ```{r}
 filename <- paste(username, "green-taxi.Rd", sep="-")
@@ -324,9 +340,15 @@ saveRDS(df, file=file1)
 
 print(file)
 ```
-![](media/19_train.PNG)
+| ![](media/19_train.PNG) |
+| ------ |
 
-We can save it both as RD and CSV
+We can save it both as RD and CSV (look inside the train folder and you will see the datasets have been saved).
+
+Recall that the files are saved from our folder to a file share in Azure.
+
+| ![](media/SavedToFileShare.PNG) |
+| ------ |
 
 ### Upload Data to datastore.
 
