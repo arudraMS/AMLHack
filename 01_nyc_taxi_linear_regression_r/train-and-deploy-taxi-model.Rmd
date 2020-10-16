@@ -41,6 +41,12 @@ The setup for your development work in this tutorial includes the following acti
 This tutorial assumes you already have the Azure ML SDK installed given we are inside a compute instance created inside the Azure ML workspace.
 
 Go ahead and load the **azuremlsdk** package.
+```{r}
+install.packages("remotes")
+remotes::install_github('https://github.com/Azure/azureml-sdk-for-r', build_vignettes = TRUE)
+install.packages(lubridate)
+install.packages(readr)
+```
 
 ```{r}
 library(azuremlsdk)
