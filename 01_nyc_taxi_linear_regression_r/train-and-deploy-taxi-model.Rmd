@@ -457,10 +457,12 @@ If you want to use your own Docker image for deployment instead, specify the `cu
 Now you have everything you need to create an **inference config** for encapsulating your scoring script and environment dependencies.
 
 ``` {r create_inference_config, eval=FALSE}
+r_env <- r_environment(name = "deploy_env")
+
 inference_config <- inference_config(
   entry_script = "predict.R",
   source_directory = "deploy",
-  environment = env)
+  environment = r_env)
 ```
 
 ### Deploy to ACI
