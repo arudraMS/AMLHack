@@ -393,10 +393,26 @@ Head over to the workspace and check out the `Explore` tab on your dataset to lo
 
 ### Create R environment
 
+```{r create_environment}
 
-### Create Estimators
+pkg1 <- cran_package("lubridate")
+pkg2 <- cran_package("optparse")
+env <- r_environment(name = "r_env",
+                     cran_packages = list(pkg1, pkg2))
+```
+
+### Create Estimators/Script Run Config
+
+<https://docs.microsoft.com/en-us/azure/machine-learning/how-to-set-up-training-targets>
+
+When training, it is common to start on your local computer, and then later scale out to a cloud-based cluster. With Azure Machine Learning, you can run your script on various compute targets without having to change your training script.
+
+All you need to do is define the environment for each compute target within a script run configuration. Then, when you want to run your training experiment on a different compute target, specify the run configuration for that compute.
+
 
 ### Submit your job
+
+Submitted the run will submit to the experiment the training of a the model.  
 
 Go to your experiment, and check out your runs.
 
@@ -414,7 +430,34 @@ Now that the runs have been submitted, lets discuss what we submitted, and submi
 
 ![](media/27_builds.PNG)
 
-###Deploy as a webservice
+After the runs have completed, we can review the metrics & pull out the best run based on the metric that we would like to look at.  In the training script, metrics are logged leveraging the R SDK as shown below.
+
+```{r}
+log_metric_to_run("R^2", summary(mod)$r.squared)
+```
+
+Note at the end of the training script, the output model is saved to the outputs folder, which we can see for  a given run in the Azure ML workspace.
+
+```{r}
+runs <- c(run1, run2, run3, run4, run5)
+best_rsquared = 0.0
+
+for (run in runs) {
+   metrics = get_run_metrics(run)
+   val = metrics$`R^2`
+   if (is.null(val) == FALSE){
+     if (val > best_rsquared){
+       best_run = run
+       best_rsquared = val
+     }
+   }
+}
+
+print(get_run_metrics(best_run))
+```
+
+
+### Deploy as a webservice
 
 ![](media/28_models.PNG)
 
