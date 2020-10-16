@@ -20,15 +20,15 @@ Today we will capture:
 3. Cloning notebooks from a github repo
 4. Connecting into RStudio
 5. Leveraging the R-SDK to:
-	- Connect to Workspace
-	- Create an experiment
-	- Create compute for training
-	- Registering Datasets
-	- Creating estimators
 
-\-Working with Datasets
+	* Connect your workspace
+	* Load data and prepare for training
+	* Upload data to the datastore so it is available for remote training
+	* Create a compute resource
+	* Train a linear regression model to predict taxi fair
+	* Deploy a prediction endpoint
+	* Test the model from R
 
-\-Leveraging AML Compute
 
 # References:
 
@@ -111,7 +111,7 @@ Notice the navigation on the left side.
 
 
 	
-### The compute instance.
+### 2. The compute instance.
 
 An Azure Machine Learning compute instance is a managed cloud-based workstation for data scientists.
 
@@ -180,12 +180,24 @@ RStudio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typi
 
 Notebooks and R scripts are stored in the default storage account of your workspace in Azure file share. These files are located under your “User files” directory. This storage makes it easy to share notebooks between compute instances. The storage account also keeps your notebooks safely preserved when you stop or delete a compute instance.
 
+We want to navigate to 
+
+`setwd("/mnt/batch/tasks/shared/LS_root/mounts/clusters/{your computecluster}/code/Users/{your user}/AMLHack/01_nyc_taxi_linear_regression_r")`
+
+
+
 | ![](media/09_SetWorkingDirectory.PNG) |
 | ------ |
 
-2.  Let's run some code.
 
-Head over to the file '
+
+2.  Take a look around.  So we have the main R markdown file that we will be leveraging, and there is a folder marked `train` and another marked `deploy`.  These are the scripts that we will leverage for traininging and deploying our models.
+
+
+3.  Let's run some code. 
+
+Open up the train-and-deploy-taxi-model.Rmd file. The user name - it's a prefix to make us unique in the hackathon. 
+
 
 ```{r}
 username <- "memasanz"
@@ -193,26 +205,47 @@ username <- "memasanz"
 
 3.  Notice that for the code snippet loading the libaries, we will need to install those.  The azuremlsdk is already installed for us, but we need to install the lubridate and readr packages on this vm.
 
+
 ```{r}
 library(azuremlsdk)
 library(lubridate)
 library(readr)
 ```
 
-![](media/10_InstallPackages.PNG)
+| ![](media/10_InstallPackages.PNG) |
+| ------ |
+
+Now you can run the loading of the libraries
+
+```{r}
+library(azuremlsdk)
+library(lubridate)
+library(readr)
+```
 
 
 Now that we have installed the packages, and we are using the correct working directory, when we try to connect to the workspace
 it is going to ask us to log in.
-![](media/11_Login.PNG)
+
+| ![](media/11_Login.PNG) |
+| ------ |
+
+You will head over to <https://microsoft.com/devicelogin> with the code provided inside RStudio.  with the code, careful to copy over the entire code.
+
+| ![](media/11_Loginb.PNG) |
+| ------ |
+
+
+So you can paste it into the code box.
 
 ![](media/12_Login.PNG)
 
-Note the config file was written.  You can see that updated file over in the Azure ML workspace in a folder.  This config file is pretty slick.  It has the configuation information needed to connect into your workspace.  
+Note the commented out code to write a config file.  You can see that updated file over in the Azure ML workspace in a folder.  This config file is pretty slick.  It has the configuation information needed to connect into your workspace if you were to connect from a resource outside of Azure ML - (using a local machine, databricks etc.) 
 
-![](media/13_write_config.PNG)
+| ![](media/13_write_config.PNG) |
+| ------ |
 
-Creating an experiment. 
+### 3.  Creating an experiment. 
 Now we will create the experiment.  This is where you can group your various runs together and compare your metrics.
 
 
@@ -223,13 +256,25 @@ exp <- experiment(ws, experiment_name)
 
 Clicking on the experiments tab, we will see that a new experiment has been added.
 
-![](media/15_Experiments.PNG)
+| ![](media/15_Experiments.PNG) |
+| ------ |
 
 You should see an experiment with your user name.
 
-![](media/16_Experiments.PNG)
+| ![](media/16_Experiments.PNG) |
+| ------ |
 
-Creating Compute Cluster
+### 4. Creating Compute Cluster
+
+A compute target is a designated compute resource or environment where you run your training script or host your service deployment. This location might be your local machine or a cloud-based compute resource. Using compute targets makes it easy for you to later change your compute environment without having to change your code.
+
+In a typical model development lifecycle, you might:
+
+Start by developing and experimenting on a small amount of data. At this stage, use your local environment, such as a local computer or cloud-based virtual machine (VM), as your compute target.
+Scale up to larger data, or do distributed training by using one of these training compute targets.
+After your model is ready, deploy it to a web hosting environment or IoT device with one of these deployment compute targets.
+The compute resources you use for your compute targets are attached to a workspace. Compute resources other than the local machine are shared by users of the workspace.
+
 
 ```{r create_cluster}
 cluster_name <- paste(username, "rcluster", sep = "") 
@@ -239,8 +284,9 @@ if (is.null(compute_target)) {
   compute_target <- create_aml_compute(workspace = ws,
                                        cluster_name = cluster_name,
                                        vm_size = vm_size,
-                                       min_nodes = 1,
-                                       max_nodes = 1)
+                                       min_nodes = 0,
+                                       max_nodes = 3,
+                                       idle_seconds_before_scaledown = 1500)
   
   wait_for_provisioning_completion(compute_target, show_output = TRUE)
 }
