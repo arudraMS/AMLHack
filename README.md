@@ -1,8 +1,7 @@
----
-Azure Machine Learning Hackathon
----
 
-# Objective:
+# Azure Machine Learning Hackathon
+
+## Objective:
 
 
 Objective of this hackathon is to familiarize you with Azure ML looking at a
@@ -84,12 +83,12 @@ business needs and the roles within your teams.
 
 
 
-|![](media/c69b9bbc02702811bede4c5301949ad0.png)|
+| ![](media/c69b9bbc02702811bede4c5301949ad0.png) |
 -
 
 ### 1. The Workspace
 
-|![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png)|
+| ![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png) |
 -
 
 1.1.  Let’s get into the workspace with the link provided.
