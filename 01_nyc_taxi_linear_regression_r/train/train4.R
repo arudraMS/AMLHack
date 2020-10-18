@@ -3,7 +3,7 @@
 
 library(azuremlsdk)
 library(optparse)
-#library(caret)
+
 
 options <- list(
   make_option(c("-d", "--data_folder")),
@@ -26,22 +26,6 @@ paste(filename)
 
 paste("about to read RDS")
 df <- readRDS(file.path(opt$data_folder, filename))
-
-
-##option 3 - 
-#ws <- load_workspace_from_config()
-#ws <- get_workspace(name="mm-machine-learning-ws-dev", auth = NULL, subscription_id = NULL, resource_group = NULL)
-#paste(ws)
-#ds <- get_default_datastore(ws)
-
-
-#target_path <- paste(opt$username, "greentaxi", sep="-")
-#df <- download_from_datastore(ds,
-#                          list(paste("./", filename, sep="")),
-#                          target_path = target_path,
-#                          overwrite = TRUE)
-
-#df <- get_dataset_by_name(workspace="mm-machine-learning-ws-dev", name="green-taxi", version = "latest")
 
 summary(df)
 #-----------------------------
@@ -71,8 +55,8 @@ RMSE = function(model){
 
 #------------------------------------------
 
-print("About to generate model Model 1")
-#mod = lm(totalAmount ~ vendorID*tripDistance + vendorID*passengerCount, data = df_train)
+print("About to generate model Model 4")
+
 mod = lm(totalAmount ~ tripDistance + passengerCount + vendorID   + month_num + day_of_month + day_of_week + hour_of_day, data = df_train)
 
 
