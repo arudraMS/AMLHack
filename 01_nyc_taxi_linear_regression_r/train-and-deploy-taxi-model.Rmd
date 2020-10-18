@@ -474,7 +474,7 @@ register_environment(environment=r_env, workspace=ws)
 
 inference_config <- inference_config(
   entry_script = "predict.R",
-  source_directory = "deploy",
+  source_directory = ".",
   environment = r_env)
 ```
 
