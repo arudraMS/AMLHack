@@ -162,7 +162,11 @@ After cloning, you can click on the refresh icon to ensure you are able to see t
 | ![](media/4ae2c83ab98f1e823f49d4e2820cad73.png) |
 | ------ |
 
+Let's go ahead and disconnect from the git repo.  First we need to give ourselves permission to the files/folders.
 
+```
+chmod -R 775 AML
+```
 
 Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SDK- providing extensibility to run your code in a compute instance or your local machine (VSCode Azure ML extension is *tight*).  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
 
