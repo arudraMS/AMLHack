@@ -24,6 +24,17 @@ In this tutorial, you learn the following tasks:
 ```{r}
 username <- "memasanz"
 ```
+
+### Install required packages
+Please install the required packages for the demo.
+
+Go ahead and load the **azuremlsdk** package.
+```{r}
+install.packages("azuremlsdk")
+install.packages(lubridate)
+install.packages(readr)
+```
+
 ## Prerequisites
 
 If you don't have access to an Azure ML workspace, follow the [setup tutorial](https://azure.github.io/azureml-sdk-for-r/articles/configuration.html) to configure and create a workspace.
@@ -37,16 +48,7 @@ The setup for your development work in this tutorial includes the following acti
 * Create a remote compute target to use for training
 
 
-### Install required packages
-This tutorial assumes you already have the Azure ML SDK installed given we are inside a compute instance created inside the Azure ML workspace.
 
-Go ahead and load the **azuremlsdk** package.
-```{r}
-install.packages("remotes")
-remotes::install_github('https://github.com/Azure/azureml-sdk-for-r', build_vignettes = TRUE)
-install.packages(lubridate)
-install.packages(readr)
-```
 
 ```{r}
 library(azuremlsdk)
