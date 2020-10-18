@@ -31,8 +31,8 @@ Please install the required packages for the demo.
 Go ahead and load the **azuremlsdk** package.
 ```{r}
 install.packages("azuremlsdk")
-install.packages(lubridate)
-install.packages(readr)
+install.packages("lubridate")
+install.packages("readr")
 ```
 
 ## Prerequisites
