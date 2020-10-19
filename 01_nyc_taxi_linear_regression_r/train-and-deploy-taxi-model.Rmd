@@ -548,7 +548,7 @@ wait_for_provisioning_completion(aks_target, show_output = TRUE)
 r_env <- r_environment(name = "deploy_env")
 inference_config <- inference_config(
   entry_script = "predict.R",
-  source_directory = "deploy",
+  source_directory = ".",
   environment = r_env)
 aks_config <- aks_webservice_deployment_config(cpu_cores = 1, memory_gb = 1)
 
