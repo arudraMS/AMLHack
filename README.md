@@ -495,6 +495,141 @@ Let's go through these steps in detail.
 ![](media/29_deploy.PNG)
 
 
+## Day 2
+
+Today's objective is to tie what was done with R, into leveraging the python SDK.  We also want to show case Auto ML, as we lean into python, and are now comfortable with the Azure ML Workspace, we can establish an deploy models straight from the portal.
+
+
+### Auto ML
+
+Automated machine learning is a process in which the best machine learning algorithm to use for your specific data is selected for you.
+
+When to use AutoML: classify, regression, & forecast
+
+<https://docs.microsoft.com/en-us/azure/machine-learning/concept-automated-ml>
+
+Note there is automatic featurization based on your task
+
+<https://docs.microsoft.com/en-us/azure/machine-learning/how-to-configure-auto-features#featurization>
+
+
+Click on the Auto ML Icon.
+
+![](media/Day2/01AutoMLIcon.PNG)
+
+Click on `New Automated ML Run` link
+
+![](media/Day2/02AutoML.PNG)
+
+Note here we can select one of our saved datasets, which is awesome.  We can also select from the open datasets as well.
+![](media/Day2/03AutoML.PNG)
+
+![](media/Day2/04AutoML.PNG)
+
+We can filter based on the word `green`
+![](media/Day2/05AutoML.PNG)
+
+![](media/Day2/06AutoML.PNG)
+
+![](media/Day2/07AutoML.PNG)
+
+![](media/Day2/08AutoML.PNG)
+
+![](media/Day2/09AutoML.PNG)
+
+Click on the regression option.
+![](media/Day2/10AutoML.PNG)
+
+![](media/Day2/11AutoML.PNG)
+
+Note you can select the primary metric for selecting the `best model`
+![](media/Day2/12AutoML.PNG)
+
+Checking the check box for explaining the model will provide lots of information regarding *why* a model was selected.
+
+<https://docs.microsoft.com/en-us/azure/machine-learning/how-to-machine-learning-interpretability-aml>
+
+You can block models from running
+![](media/Day2/13AutoML.PNG)
+
+You can specify validation
+
+![](media/Day2/14AutoML.PNG)
+
+You can also specificy featurization of the data, and select the columns.
+
+![](media/Day2/15AutoML.PNG)
+
+Clicking finish will being the runs.
+![](media/Day2/16AutoML.PNG)
+
+The experiment will run for ~30 minutes
+![](media/Day2/17AutoML.PNG)
+
+
+**We will come back to this thread after the 30 minutes.**
+
+### Linear Regression leveraging the python SDK.
+
+In your Azure ML Workspace head over to your compute node, and select the jupyter notebook experience.
+
+![](media/Day2/18_SelectJupyter.PNG)
+
+Now you are in jupyter notebook experience
+
+![](media/Day2/19_Jupyter.PNG)
+
+Let's head over to the linear regression notebook.
+
+![](media/Day2/20_Jupyter.PNG)
+
+As we updated the user for the R markdown file yesturday, let's update the user here.
+
+![](media/Day2/21_Jupyter.PNG)
+
+Build features based on python library just as we did with R.
+
+
+![](media/Day2/22_Jupyter.PNG)
+
+Cleanse the data (Note this is a little different than what we did in the R notebook - if you wanted to the exact same results, that would be why you would leverage a **registered dataset**)
+
+![](media/Day2/23_Jupyter.PNG)
+
+Be sure to go back into Azure ML Workspace and review your registered dataset.  The screen shot below is a reminder to go and grab that code directly from Azure ML Workspace.
+
+![](media/Day2/24_Jupyter.PNG)
+
+
+Note that even though the auto ml job is running, we will be able to run the linear regression experiment on our machine.
+![](media/Day2/25_Jupyter.PNG)
+
+![](media/Day2/26_Jupyter.PNG)
+
+Note in the **training** script, we used the Sklearn.pipeline.  R does a great job of handling the categorical variables, with python, if we used the pandas dataframe get_dummies, we would be trasforming the dataset, and thus transforming what would be expected as inputs to the model.  This would mean that the REST API would expect dummy variables, which from an end user perspective, would not be ideal.
+
+Sklearn.pipeline is a Python implementation of ML pipeline. Instead of going through the model fitting and data transformation steps for the training and test datasets separately, you can use Sklearn.pipeline to automate these steps. Here is a diagram representing a pipeline for training a machine learning model based on supervised learning.
+
+Note the metrics are based on what we selected in the training script, just like with the R SDK.
+![](media/Day2/27_jupyter.PNG)
+
+The score script is the same concept as was seen with the predict.R script.  Note in the score.py file we leverage the 
+**inference_schema** library which makes the swagger avaialable to our REST end point.
+
+Also note that the authentication was set to true.  This means that ACI will require a key.
+
+![](media/Day2/28_swagger.PNG)
+
+
+```
+{"swagger": "2.0", "info": {"title": "memasanz-python-regression-srv", "description": "API specification for the Azure Machine Learning service memasanz-python-regression-srv", "version": "1.0"}, "schemes": ["https"], "consumes": ["application/json"], "produces": ["application/json"], "securityDefinitions": {"Bearer": {"type": "apiKey", "name": "Authorization", "in": "header", "description": "For example: Bearer abc123"}}, "paths": {"/": {"get": {"operationId": "ServiceHealthCheck", "description": "Simple health check endpoint to ensure the service is up at any given point.", "responses": {"200": {"description": "If service is up and running, this response will be returned with the content 'Healthy'", "schema": {"type": "string"}, "examples": {"application/json": "Healthy"}}, "default": {"description": "The service failed to execute due to an error.", "schema": {"$ref": "#/definitions/ErrorResponse"}}}}}, "/score": {"post": {"operationId": "RunMLService", "description": "Run web service's model and get the prediction output", "security": [{"Bearer": []}], "parameters": [{"name": "serviceInputPayload", "in": "body", "description": "The input payload for executing the real-time machine learning service.", "schema": {"$ref": "#/definitions/ServiceInput"}}], "responses": {"200": {"description": "The service processed the input correctly and provided a result prediction, if applicable.", "schema": {"$ref": "#/definitions/ServiceOutput"}}, "default": {"description": "The service failed to execute due to an error.", "schema": {"$ref": "#/definitions/ErrorResponse"}}}}}}, "definitions": {"ServiceInput": {"type": "object", "properties": {"data": {"type": "array", "items": {"type": "object"}}}, "example": {"data": [{"vendorID": "1", "passengerCount": 1, "tripDistance": 4.2, "month_num": "1", "day_of_month": "4", "day_of_week": "1", "hour_of_day": "18"}]}}, "ServiceOutput": {"type": "array", "items": {"type": "object"}, "example": [18.2281]}, "ErrorResponse": {"type": "object", "properties": {"status_code": {"type": "integer", "format": "int32"}, "message": {"type": "string"}}}}}
+```
+
+<https://editor.swagger.io/>
+
+![](media/Day2/29_swagger.PNG)
+
+
 
 
 
