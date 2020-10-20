@@ -236,7 +236,7 @@ it is going to ask us to log in.
 
 You will head over to <https://microsoft.com/devicelogin> with the code provided inside RStudio.  with the code, careful to copy over the entire code.
 
-![](media/11_Loginb.PNG)
+![](media/12_Loginb.PNG)
 
 
 
@@ -494,12 +494,12 @@ Let's go through these steps in detail.
 ![](media/29_deploy.PNG)
 
 
-## Day 2
+# Day 2
 
-Today's objective is to tie what was done with R, into leveraging the python SDK.  We also want to show case Auto ML, as we lean into python, and are now comfortable with the Azure ML Workspace, we can establish an deploy models straight from the portal.
+Today's objective is to tie what was done with R, into leveraging the python SDK.  We also want to show case AutoML, as we lean into python, and are now comfortable with the Azure ML Workspace, we can establish an deploy models straight from the portal.  There are 2 main modules we want to get through today.  AutoML and our linear regression notebook.
 
 
-### 1. Auto ML
+### 1. AutoML
 
 Automated machine learning is a process in which the best machine learning algorithm to use for your specific data is selected for you.
 
@@ -520,19 +520,8 @@ Click on `New Automated ML Run` link
 
 ![](media/Day2/02AutoML.PNG)
 
-Note here we can select one of our saved datasets, which is awesome.  We can also select from the open datasets as well.
-![](media/Day2/03AutoML.PNG)
+Note here we can select one of our saved datasets, which is awesome.  The file format for the open dataset we were using was parquet, we can programmatically convert from parquet to a tabular datasets, but that means that we should not select the OpenDataset, but rather use one of our registered datasets.
 
-![](media/Day2/04AutoML.PNG)
-
-We can filter based on the word `green`
-![](media/Day2/05AutoML.PNG)
-
-![](media/Day2/06AutoML.PNG)
-
-![](media/Day2/07AutoML.PNG)
-
-![](media/Day2/08AutoML.PNG)
 
 ![](media/Day2/09AutoML.PNG)
 
@@ -562,9 +551,22 @@ You can also specificy featurization of the data, and select the columns.
 Clicking finish will being the runs.
 ![](media/Day2/16AutoML.PNG)
 
-The experiment will run for ~30 minutes
+The experiment will run for ~1 hour to go through the models
 ![](media/Day2/17AutoML.PNG)
 
+![](media/Day2/AutoMLRun.PNG) 
+
+Clicking on the Run/RunId will let us see the 
+
+
+![](media/Day2/30_AutoML.PNG) 
+
+
+![](media/Day2/31_AutoML.PNG)
+
+Clicking on the winning model will provide the option to deploy, as well as checking out the child runs.
+
+![](media/Day2/32_AutoML.PNG)
 
 **We will come back to this thread after the 30 minutes.**
 
