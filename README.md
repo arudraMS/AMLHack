@@ -94,14 +94,16 @@ Once you have a model you like, you register it with the workspace. You then use
 
 <https://docs.microsoft.com/en-us/azure/machine-learning/concept-workspace>
 
+| --- |
 | ![](media/30_workspace.PNG) |
-| ------ |
+
 
 Heading into the workspace from your URL we can enter the Azure ML Studio.
 1.1.  Let’s get into the workspace with the link provided.
 
+| --- |
 | ![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png) |
-| ------ |
+
 
 
 Notice the navigation on the left side.
