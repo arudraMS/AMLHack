@@ -84,7 +84,7 @@ business needs and the roles within your teams.
 
 ![](media/c69b9bbc02702811bede4c5301949ad0.png) 
 
-
+# Day 1 - R SDK.
 
 ### 1. The Workspace
 
@@ -499,9 +499,13 @@ Let's go through these steps in detail.
 Today's objective is to tie what was done with R, into leveraging the python SDK.  We also want to show case AutoML, as we lean into python, and are now comfortable with the Azure ML Workspace, we can establish an deploy models straight from the portal.  There are 2 main modules we want to get through today.  AutoML and our linear regression notebook.
 
 
-### 1. AutoML
+# AutoML
 
-Automated machine learning is a process in which the best machine learning algorithm to use for your specific data is selected for you.
+**Automated machine learning**  is a process in which the best machine learning algorithm to use for your specific data is selected for you.
+
+Automated machine learning, also referred to as automated ML or AutoML, is the process of automating the time consuming, iterative tasks of machine learning model development. It allows data scientists, analysts, and developers to build ML models with high scale, efficiency, and productivity all while sustaining model quality. Automated ML is based on a breakthrough from our Microsoft Research division.
+
+Traditional machine learning model development is resource-intensive, requiring significant domain knowledge and time to produce and compare dozens of models. With automated machine learning, you'll accelerate the time it takes to get production-ready ML models with great ease and efficiency.
 
 When to use AutoML: classify, regression, & forecast
 
@@ -510,6 +514,10 @@ When to use AutoML: classify, regression, & forecast
 Note there is automatic featurization based on your task
 
 <https://docs.microsoft.com/en-us/azure/machine-learning/how-to-configure-auto-features#featurization>
+
+![](media/Day2/33_Featurization.PNG)
+
+### Let's begin
 
 
 Click on the Auto ML Icon.
@@ -568,9 +576,21 @@ Clicking on the winning model will provide the option to deploy, as well as chec
 
 ![](media/Day2/32_AutoML.PNG)
 
-**We will come back to this thread after the 30 minutes.**
+Clicking on teh **Explanations (preview)**, we can see that distance is a key factor in explaining our model.
 
-### 2. Linear Regression leveraging the python SDK.
+![](media/Day2/34_Explaination.PNG) 
+
+We can deploy the model with a **no code** option directly through the UI.  
+
+![](media/Day2/35_Deploy_model.PNG) 
+
+Once deployed the body of the request will look like:
+
+<https://docs.microsoft.com/en-us/azure/machine-learning/how-to-consume-web-service?tabs=python>
+![](media/Day2/AutoMLBodyOfRequest.PNG)
+
+
+# 2. Linear Regression leveraging the python SDK.
 
 In your Azure ML Workspace head over to your compute node, and select the jupyter notebook experience.
 
