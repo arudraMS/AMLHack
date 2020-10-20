@@ -396,7 +396,7 @@ Head over to the workspace and check out the `Explore` tab on your dataset to lo
 
 ### 9. Create R environment
 
-```{r create_environment}
+```
 
 pkg1 <- cran_package("lubridate")
 pkg2 <- cran_package("optparse")
