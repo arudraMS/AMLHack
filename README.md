@@ -261,13 +261,12 @@ exp <- experiment(ws, experiment_name)
 
 Clicking on the experiments tab, we will see that a new experiment has been added.
 
-| ![](media/15_Experiments.PNG) |
-| ------ |
+![](media/15_Experiments.PNG) 
+
 
 You should see an experiment with your user name.
 
-| ![](media/16_Experiments.PNG) |
-| ------ |
+
 
 ### 4. Creating Compute Cluster
 
@@ -303,16 +302,16 @@ https://azure.github.io/azureml-sdk-for-r/reference/create_aml_compute.html
 
 Typically, setting the idle_seconds_before_scaledown is helpful to keep costs down.  For this we are using small machines, and we want to make the best use of time, so that was not set.  Today so we are not waiting on this cluster, we are going to set the min and max cluster size to be 1.  (Typical wait time = 5 minutes)  If we set the min node to be 0 with a idel_seconds_before_scaledown, then the machine is a best practice.  Because we did not do that, we need to rememeber to delete this machine when we are done for the day.
 
-| ![](media/16_Compute.PNG) |
-| ------ |
+![](media/16_Compute.PNG) 
 
-| ![](media/17_Compute.PNG) |
-| ------ |
+
+![](media/17_Compute.PNG) 
+
 
 We will see that the creation of the compute completed.
 
-| ![](media/18_ComputeCreated.PNG) |
-| ------ |
+![](media/18_ComputeCreated.PNG) 
+
 
 ### 6. Working data
 
@@ -346,15 +345,15 @@ saveRDS(df, file=file1)
 print(file)
 ```
 
-| ![](media/19_train.PNG) |
-| ------ |
+![](media/19_train.PNG)
+
 
 We can save it both as RD and CSV (look inside the train folder and you will see the datasets have been saved).
 
 Recall that the files are saved from our folder to a file share in Azure.
 
-| ![](media/20_SavedToFileShare.PNG) |
-| ------ |
+![](media/20_SavedToFileShare.PNG)
+
 
 ### 7. Upload Data to datastore.
 
@@ -386,13 +385,13 @@ Additional datasets capabilities can be found in the following documentation:
 [Monitor your dataset to help with data drift detection](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-monitor-datasets).
 
 
-| ![](media/20_registered_dataset.PNG) |
-| ------ |
+![](media/20_registered_dataset.PNG) 
+
 
 Head over to the workspace and check out the `Explore` tab on your dataset to look at the profile that was generated.
 
-| ![](media/21_profile.PNG) |
-| ------ |
+![](media/21_profile.PNG) 
+
 
 
 ### 9. Create R environment
@@ -428,17 +427,17 @@ Go to your experiment, and check out your runs.
 
 Now that the runs have been submitted, lets discuss what we submitted, and submitted to where? (This will take about 15 minutes to start running)
 
-| ![](media/24_runs.PNG) |
-| ------ |
+![](media/24_runs.PNG) 
 
-| ![](media/25_builds.PNG) |
-| ------ |
 
-| ![](media/26_builds.PNG) |
-| ------ |
+![](media/25_builds.PNG) 
 
-| ![](media/27_builds.PNG) |
-| ------ |
+
+![](media/26_builds.PNG) 
+
+
+![](media/27_builds.PNG) 
+
 
 After the runs have completed, we can review the metrics & pull out the best run based on the metric that we would like to look at.  In the training script, metrics are logged leveraging the R SDK as shown below.
 
@@ -468,8 +467,8 @@ print(get_run_metrics(best_run))
 
 Notice the number of nodes that we use during our training goes up.
 
-| ![](media/Nodes.PNG) |
-| ------ |
+![](media/Nodes.PNG) 
+
 
 
 ### 12. Deploy as a webservice
