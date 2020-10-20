@@ -82,7 +82,7 @@ business needs and the roles within your teams.
 ### Let's get started
 
 
-| ![](media/c69b9bbc02702811bede4c5301949ad0.png) |
+![](media/c69b9bbc02702811bede4c5301949ad0.png) 
 
 
 
@@ -216,9 +216,8 @@ library(azuremlsdk)
 library(lubridate)
 library(readr)
 ```
+![](media/10_InstallPackages.PNG)
 
-| ![](media/10_InstallPackages.PNG) |
-| ------ |
 
 Now you can run the loading of the libraries
 
@@ -232,24 +231,24 @@ library(readr)
 Now that we have installed the packages, and we are using the correct working directory, when we try to connect to the workspace
 it is going to ask us to log in.
 
-| ![](media/11_Login.PNG) |
-| ------ |
+![](media/11_Login.PNG)
+
 
 You will head over to <https://microsoft.com/devicelogin> with the code provided inside RStudio.  with the code, careful to copy over the entire code.
 
-| ![](media/11_Loginb.PNG) |
-| ------ |
+![](media/11_Loginb.PNG)
+
 
 
 So you can paste it into the code box.
 
-| ![](media/12_Login.PNG) |
-| ------ |
+![](media/12_Login.PNG)
+
 
 Note the commented out code to write a config file.  You can see that updated file over in the Azure ML workspace in a folder.  This config file is pretty slick.  It has the configuation information needed to connect into your workspace if you were to connect from a resource outside of Azure ML - (using a local machine, databricks etc.) 
 
-| ![](media/13_write_config.PNG) |
-| ------ |
+![](media/13_write_config.PNG)
+
 
 ### 3.  Creating an experiment. 
 Now we will create the experiment.  This is where you can group your various runs together and compare your metrics.
@@ -298,7 +297,7 @@ if (is.null(compute_target)) {
 }
 ```
 
-### Creating Compute 
+### 5. Creating Compute 
 
 https://azure.github.io/azureml-sdk-for-r/reference/create_aml_compute.html
 
@@ -315,7 +314,7 @@ We will see that the creation of the compute completed.
 | ![](media/18_ComputeCreated.PNG) |
 | ------ |
 
-### Working data
+### 6. Working data
 
 Move through notebook as it pulls a dataset in and begins the cleansing process.
 
@@ -357,10 +356,10 @@ Recall that the files are saved from our folder to a file share in Azure.
 | ![](media/20_SavedToFileShare.PNG) |
 | ------ |
 
-### Upload Data to datastore.
+### 7. Upload Data to datastore.
 
 
-### Register the Dataset
+### 8. Register the Dataset
 Registering a dataset provides with traceability to your dataset, and profiling along with code to consume the dataset.
 
 Azure Machine Learning datasets aren't copies of your data. By creating a dataset, you create a reference to the data in its storage service, along with a copy of its metadata.
@@ -396,7 +395,7 @@ Head over to the workspace and check out the `Explore` tab on your dataset to lo
 | ------ |
 
 
-### Create R environment
+### 9. Create R environment
 
 ```{r create_environment}
 
@@ -406,7 +405,7 @@ env <- r_environment(name = "r_env",
                      cran_packages = list(pkg1, pkg2))
 ```
 
-### Create Estimators/Script Run Config
+### 10. Create Estimators/Script Run Config
 
 <https://docs.microsoft.com/en-us/azure/machine-learning/how-to-set-up-training-targets>
 
@@ -415,17 +414,17 @@ When training, it is common to start on your local computer, and then later scal
 All you need to do is define the environment for each compute target within a script run configuration. Then, when you want to run your training experiment on a different compute target, specify the run configuration for that compute.
 
 
-### Submit your job
+### 11. Submit your job
 
 Submitted the run will submit to the experiment the training of a the model.  
 
 Go to your experiment, and check out your runs.
 
-| ![](media/22_checkoutruns.PNG) |
-| ------ |
+![](media/22_checkoutruns.PNG)
 
-| ![](media/23_runs.PNG) |
-| ------ |
+
+![](media/23_runs.PNG)
+
 
 Now that the runs have been submitted, lets discuss what we submitted, and submitted to where? (This will take about 15 minutes to start running)
 
@@ -473,9 +472,9 @@ Notice the number of nodes that we use during our training goes up.
 | ------ |
 
 
-### Deploy as a webservice
+### 12. Deploy as a webservice
 
-#### Register the Model
+### 13. Register the Model
 
 A registered model is a logical container for one or more files that make up your model. For example, if you have a model that's stored in multiple files, you can register them as a single model in the workspace. After you register the files, you can then download or deploy the registered model and receive all the files that you registered.
 
@@ -501,7 +500,7 @@ Let's go through these steps in detail.
 Today's objective is to tie what was done with R, into leveraging the python SDK.  We also want to show case Auto ML, as we lean into python, and are now comfortable with the Azure ML Workspace, we can establish an deploy models straight from the portal.
 
 
-### Auto ML
+### 1. Auto ML
 
 Automated machine learning is a process in which the best machine learning algorithm to use for your specific data is selected for you.
 
@@ -570,7 +569,7 @@ The experiment will run for ~30 minutes
 
 **We will come back to this thread after the 30 minutes.**
 
-### Linear Regression leveraging the python SDK.
+### 2. Linear Regression leveraging the python SDK.
 
 In your Azure ML Workspace head over to your compute node, and select the jupyter notebook experience.
 
