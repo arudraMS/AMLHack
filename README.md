@@ -83,7 +83,7 @@ business needs and the roles within your teams.
 
 
 | ![](media/c69b9bbc02702811bede4c5301949ad0.png) |
-| ------ |
+
 
 
 ### 1. The Workspace
@@ -94,14 +94,14 @@ Once you have a model you like, you register it with the workspace. You then use
 
 <https://docs.microsoft.com/en-us/azure/machine-learning/concept-workspace>
 
-| --- |
+
 | ![](media/30_workspace.PNG) |
 
 
 Heading into the workspace from your URL we can enter the Azure ML Studio.
 1.1.  Let’s get into the workspace with the link provided.
 
-| --- |
+
 | ![](media/4a13c87585ac2cca3e2ce26ad4f1de9d.png) |
 
 
@@ -109,7 +109,7 @@ Heading into the workspace from your URL we can enter the Azure ML Studio.
 Notice the navigation on the left side.
 
 | ![](media/4ddfa3cb3ee53c076bcd24d38a749703.png) |
-| ------ |
+
 
 
 	
@@ -125,13 +125,13 @@ Use a compute instance as your fully configured and managed development environm
 
 
 | ![](media/e156bb54942d9e34fd77be2795b024bd.png) |
-| ------ |
+
 
 
 Let’s click on the create button.  This step typically will take about 5 minutes to spin up a new compute instance.
 
 | ![](media/6b6aea23628081572dab1f106eba0888.png) |
-| ------ |
+
 
 After your compute instance is up and rolling, we can connect with git to this repo.  
 
@@ -146,8 +146,8 @@ If you navigate to the notebooks, we are able to leverage git and clone the
 resources which will then be available to our compute cluster.
 
 
-! ![](media/08b_Clone.PNG) |
-| ------ |
+| ![](media/08b_Clone.PNG) |
+
 
 Click on the git icon and let’s clone our notebooks
 
@@ -157,12 +157,11 @@ git clone https://github.com/memasanz/AMLHack.git
 
 After cloning, you can click on the refresh icon to ensure you are able to see the repo.
 | ![](media/08c_refresh.PNG)
-| ------ |
 
 
 
 | ![](media/4ae2c83ab98f1e823f49d4e2820cad73.png) |
-| ------ |
+
 
 Let's go ahead and disconnect from the git repo.  First we need to give ourselves permission to the files/folders.
 
@@ -173,12 +172,12 @@ chmod -R 775 AML
 Now that the notebooks we need are there, let's head over to our compute node.  Note that the R SDK is just that, an SDK- providing extensibility to run your code in a compute instance or your local machine (VSCode Azure ML extension is *tight*).  To keep things simple for today, we are going to leverage the compute nodes within Azure. 
 
 | ![](media/07_Compute.PNG) |
-| ------ |
+
 
 Let's head over to RStudio by clicking on the RStudio hyperlink.
 
 | ![](media/08_Compute.PNG) |
-| ------ |
+
 
 RStudio - up and rolling with the correct version of Azure ML SDK.  Sweet.  Typical house keeping for your session.
 
