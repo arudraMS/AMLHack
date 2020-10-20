@@ -589,6 +589,8 @@ Once deployed the body of the request will look like:
 <https://docs.microsoft.com/en-us/azure/machine-learning/how-to-consume-web-service?tabs=python>
 ![](media/Day2/AutoMLBodyOfRequest.PNG)
 
+Note we can get the keys for the ACI model from the UI.
+![](media/Day2/ModelKeys.png)
 
 # 2. Linear Regression leveraging the python SDK.
 
